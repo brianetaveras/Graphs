@@ -38,15 +38,29 @@ class SocialGraph:
 
         The number of users must be greater than the average number of friendships.
         """
+        import random
         # Reset graph
         self.last_id = 0
         self.users = {}
         self.friendships = {}
         # !!!! IMPLEMENT ME
-
         # Add users
-
+        for i in range(0, num_users):
+            self.add_user(f"User {i}")
         # Create friendships
+        # Generate all possible friendship combinations
+        possible_friendships = []    #[ (Friend_id_1, friend_id_2 )  ]
+        for user_id in self.users:
+            for friend_id in range(user_id + 1, self.last_id + 1):
+                possible_friendships.append( (user_id, friend_id) )
+        
+        # randomize the above array
+        random.shuffle(possible_friendships)
+        # Pick out num_users * avg_friendships number of friend combos from possible_friendships
+        for i in range(num_users * avg_friendships // 2):
+            friendship = possible_friendships[i]
+            self.add_friendship(friendship[0], friendship[1])
+
 
     def get_all_social_paths(self, user_id):
         """
@@ -59,12 +73,27 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+
+        queue = [[user_id]]
+        while queue:
+            path = queue.pop()
+            current = path[-1]
+
+            if current not in visited:
+                visited[current] = path
+
+                print(self.friendships)
+                # for friend in self.friendships[current]:
+                #     new_path = path.copy()
+                #     new_path.append(friend)
+                #     queue.append(new_path)
+                    
         return visited
 
 
 if __name__ == '__main__':
     sg = SocialGraph()
     sg.populate_graph(10, 2)
-    print(sg.friendships)
+    # print(sg.friendships)
     connections = sg.get_all_social_paths(1)
-    print(connections)
+    # print(connections)
